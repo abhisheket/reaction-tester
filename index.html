@@ -1,0 +1,81 @@
+<html>
+	<head>
+		<title>Reaction Timer Game</title>
+		
+		<script type="text/javascript" src="jquery.min.js"></script>
+		<script src="jquery-ui/jquery-ui.js"></script>
+		
+		<link href="jquery-ui/jquery-ui.css" rel="stylesheet">
+		
+		<style type= "text/css">
+			#shape{
+				display: none;
+				position: relative;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Test Your Reactions!</h1>
+		<p>Click on the boxes and circles as quickly as you can!</p>
+		<p>Your time: <span id="timeTaken"></span></p>
+		<p>Best time: <span id="bestTime"></span></p>
+		<div id= "shape"></div>
+		<script type="text/javascript">
+			var start = new Date().getTime();
+			var timeFlag = true;
+			var besttime= "";
+			var randomTime = Math.random() * 2000;
+			function getRandomColour(){
+				var letters= '0123456789ABCDEF'.split('');
+				var color = '#';
+				for(var i = 0; i < 6; i++){
+					color += letters[Math.floor(Math.random()*16)];
+				}
+				return color;
+			}
+			function makeShapeAppear(){
+				var top = Math.random() * 400;
+				var left = Math.random() * 600;
+				var width = (Math.random() * 300) + 50;
+				document.getElementById("shape").style.top= top + "px";
+				document.getElementById("shape").style.left= left + "px";
+				document.getElementById("shape").style.width= width + "px";
+				document.getElementById("shape").style.height= width + "px";
+				if(Math.random() < 0.5){
+					document.getElementById("shape").style.borderRadius= "50%";
+				} else{
+					document.getElementById("shape").style.borderRadius= "0";
+				}
+				document.getElementById("shape").style.backgroundColor= getRandomColour();
+				$("#shape").show();
+				start = new Date().getTime();
+			}
+			function shapeAppearDelay(){
+				setTimeout(makeShapeAppear, randomTime);
+			}
+			shapeAppearDelay();
+			function playSound(url){
+				var a = new Audio(url);
+				a.play();
+			}
+			document.getElementById("shape").onclick = function(){
+				var end = new Date().getTime();
+				$("#shape").hide( "explode", {pieces: 9});
+				playSound("click.mp3");
+				var timetaken = (end - start)/1000;
+				if(timeFlag == true){
+					besttime = timetaken;
+					timeFlag= false;
+					document.getElementById("bestTime").innerHTML = besttime + "s";
+				}
+				document.getElementById("timeTaken").innerHTML = timetaken + "s";
+				shapeAppearDelay();
+				if(besttime > timetaken){
+					besttime= timetaken;
+					document.getElementById("bestTime").innerHTML = besttime + "s";
+					playSound("clickbest.mp3");
+				}
+			}
+		</script>
+	</body>
+</html>
